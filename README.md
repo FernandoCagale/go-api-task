@@ -13,5 +13,9 @@ $ go install main
 ```
 
 ```sh
+$ bin/main
+```
+
+```sh
 docker build --no-cache -t img-task-go .
 ```
