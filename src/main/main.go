@@ -8,18 +8,43 @@ import (
 
 type Task struct {
 	Description string `json:"description"`
-	Type string `json:"type"`
+	Type        string `json:"type"`
 }
 
-func (t *Task) validate() (errors map[string]string, ok bool) {
-	errors = make(map[string]string)
+type Validation struct {
+	Type    string `json:"type"`
+	Message string `json:"message"`
+}
 
-	if (t.Description == "") {
-		errors["description"] = "field description invalid"
+func (t *Task) validate() (errors map[string][]Validation, ok bool) {
+	errors = make(map[string][]Validation)
+
+	if t.Description == "" {
+		errors["description"] = append(errors["description"], Validation{
+			Type:    "required",
+			Message: "field is required",
+		})
 	}
 
-	if (t.Type == "") {
-		errors["type"] = "field type invalid"
+	if len(t.Description) > 40 {
+		errors["description"] = append(errors["description"], Validation{
+			Type:    "lenght-max",
+			Message: "field lenght max 40",
+		})
+	}
+
+	if len(t.Description) < 5 {
+		errors["description"] = append(errors["description"], Validation{
+			Type:    "lenght-min",
+			Message: "field lenght min 5",
+		})
+	}
+
+	if t.Type == "" {
+		errors["type"] = append(errors["type"], Validation{
+			Type:    "required",
+			Message: "field is required",
+		})
 	}
 
 	ok = len(errors) == 0
@@ -41,9 +66,9 @@ func saveTask(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, map[string]string{
-		"POST":     "saveTask",
+		"POST":        "saveTask",
 		"description": u.Description,
-		"type": u.Type,
+		"type":        u.Type,
 	})
 }
 
@@ -70,10 +95,10 @@ func updateTask(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, map[string]string{
-		"PUT":      "putTask",
-		"id":       id,
+		"PUT":         "updateTask",
+		"id":          id,
 		"description": u.Description,
-		"type": u.Type,
+		"type":        u.Type,
 	})
 }
 
