@@ -3,6 +3,7 @@ package main
 import (
 	"net/http"
 
+	shared "github.com/FernandoCagale/go-api-shared/src/validation"
 	"github.com/labstack/echo"
 )
 
@@ -11,37 +12,32 @@ type Task struct {
 	Type        string `json:"type"`
 }
 
-type Validation struct {
-	Type    string `json:"type"`
-	Message string `json:"message"`
-}
-
-func (t *Task) validate() (errors map[string][]Validation, ok bool) {
-	errors = make(map[string][]Validation)
+func (t *Task) validate() (errors map[string][]shared.Validation, ok bool) {
+	errors = make(map[string][]shared.Validation)
 
 	if t.Description == "" {
-		errors["description"] = append(errors["description"], Validation{
+		errors["description"] = append(errors["description"], shared.Validation{
 			Type:    "required",
 			Message: "field is required",
 		})
 	}
 
 	if len(t.Description) > 40 {
-		errors["description"] = append(errors["description"], Validation{
+		errors["description"] = append(errors["description"], shared.Validation{
 			Type:    "lenght-max",
 			Message: "field lenght max 40",
 		})
 	}
 
 	if len(t.Description) < 5 {
-		errors["description"] = append(errors["description"], Validation{
+		errors["description"] = append(errors["description"], shared.Validation{
 			Type:    "lenght-min",
 			Message: "field lenght min 5",
 		})
 	}
 
 	if t.Type == "" {
-		errors["type"] = append(errors["type"], Validation{
+		errors["type"] = append(errors["type"], shared.Validation{
 			Type:    "required",
 			Message: "field is required",
 		})
@@ -74,6 +70,7 @@ func saveTask(c echo.Context) error {
 
 func getTask(c echo.Context) error {
 	id := c.Param("id")
+
 	return c.JSON(http.StatusOK, map[string]string{
 		"GET": "getTask",
 		"id":  id,

@@ -7,6 +7,7 @@ export GOPATH=`pwd`
 ```sh
 $ go get github.com/labstack/echo
 $ go get github.com/stretchr/testify/assert
+$ go get github.com/FernandoCagale/go-api-shared/src/validation
 ```
 
 ```sh
