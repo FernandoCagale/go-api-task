@@ -1,26 +1,30 @@
 # go-api-task
 
-```sh
-export GOPATH=`pwd`
-```
+`Install dep`
 
 ```sh
-$ go get github.com/labstack/echo
-$ go get github.com/stretchr/testify/assert
-$ go get github.com/FernandoCagale/go-api-shared/src/validation
+$ go get -v github.com/golang/dep/cmd/dep
 ```
 
-```sh
-$ go install main
-```
+`Install the project's dependencies`
 
 ```sh
-$ bin/main
+$ dep ensure
 ```
 
+`Build API`
+
 ```sh
-$ src/main go test *.go
+$ go build -o build/api
 ```
+
+`Start API`
+
+```sh
+$ build/api
+```
+
+`Build docker`
 
 ```sh
 docker build --no-cache -t img-task-go .

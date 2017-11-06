@@ -4,6 +4,6 @@ RUN mkdir -p /app
 
 WORKDIR /app
 
-ADD bin/main /app/main
+ADD build/api /app/api
 
-ENTRYPOINT ["./main"]
+ENTRYPOINT ["./api"]
