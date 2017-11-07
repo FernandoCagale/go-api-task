@@ -9,10 +9,10 @@ import (
 )
 
 const (
-	dbUser     = "postgres"
-	dbPassword = "postgres"
+	dbUser     = "test"
+	dbPassword = "test"
 	dbName     = "test"
-	dbPort     = "5434"
+	dbPort     = "5432"
 )
 
 func Connection() string {
