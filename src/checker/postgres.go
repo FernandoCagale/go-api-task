@@ -1,6 +1,7 @@
 package checker
 
 import (
+	"github.com/FernandoCagale/go-api-task/src/models"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 )
@@ -23,6 +24,8 @@ func (p *postgres) IsAlive() bool {
 	if err = conn.DB().Ping(); err != nil {
 		return false
 	}
+
+	conn.AutoMigrate(&models.Task{})
 
 	return true
 }

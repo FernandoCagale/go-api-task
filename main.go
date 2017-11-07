@@ -5,13 +5,15 @@ import (
 	"github.com/FernandoCagale/go-api-task/src/datastore"
 	"github.com/FernandoCagale/go-api-task/src/handlers"
 	"github.com/FernandoCagale/go-api-task/src/lib"
+
+	log "github.com/Sirupsen/logrus"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
 )
 
 func main() {
-	db := datastore.ConnectDB()
-
+	db, err := datastore.ConnectDB()
+	failOnError(err, "Failed to init dababase connection!")
 	defer db.Close()
 
 	app := echo.New()
@@ -38,4 +40,11 @@ func main() {
 	group.DELETE("/tasks/:id", tasksHandler.DeleteTask)
 
 	app.Logger.Fatal(app.Start(":3000"))
+}
+
+func failOnError(err error, msg string) {
+	if err != nil {
+		log.Error(err)
+		log.Info(msg)
+	}
 }

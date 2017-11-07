@@ -9,25 +9,25 @@ import (
 )
 
 const (
-	dbUser     = "test"
-	dbPassword = "test"
+	dbUser     = "postgres"
+	dbPassword = "postgres"
 	dbName     = "test"
-	dbPort     = "5432"
+	dbPort     = "5434"
 )
 
 func Connection() string {
-	return fmt.Sprintf("user=%s password=%s dbname=%s port=%s sslmode=disable", dbUser, dbPassword, dbName, dbPort)
+	return fmt.Sprintf("host=api-postgres user=%s password=%s dbname=%s port=%s sslmode=disable", dbUser, dbPassword, dbName, dbPort)
 }
 
-func ConnectDB() *gorm.DB {
-	db, err := gorm.Open("postgres", connection())
+func ConnectDB() (db *gorm.DB, err error) {
+	db, err = gorm.Open("postgres", Connection())
 	if err != nil {
-		panic(err)
+		return
 	}
 
 	db.LogMode(false)
 
 	db.AutoMigrate(&models.Task{})
 
-	return db
+	return
 }
