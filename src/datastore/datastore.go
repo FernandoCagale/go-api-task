@@ -15,7 +15,7 @@ const (
 	dbPort     = "5432"
 )
 
-func connection() string {
+func Connection() string {
 	return fmt.Sprintf("user=%s password=%s dbname=%s port=%s sslmode=disable", dbUser, dbPassword, dbName, dbPort)
 }
 

@@ -8,7 +8,14 @@ import (
 	"github.com/labstack/echo"
 )
 
-func SaveTask(c echo.Context) error {
+type TaskHandler struct {
+}
+
+func NewTaskHandler() *TaskHandler {
+	return &TaskHandler{}
+}
+
+func (h *TaskHandler) SaveTask(c echo.Context) error {
 	db := c.Get("db").(*gorm.DB)
 	task := new(models.Task)
 
@@ -31,7 +38,7 @@ func SaveTask(c echo.Context) error {
 	return c.JSON(http.StatusOK, task)
 }
 
-func GetAllTask(c echo.Context) error {
+func (h *TaskHandler) GetAllTask(c echo.Context) error {
 	tasks := []models.Task{}
 	db := c.Get("db").(*gorm.DB)
 
@@ -44,7 +51,7 @@ func GetAllTask(c echo.Context) error {
 	return c.JSON(http.StatusOK, tasks)
 }
 
-func GetTask(c echo.Context) error {
+func (h *TaskHandler) GetTask(c echo.Context) error {
 	id := c.Param("id")
 	db := c.Get("db").(*gorm.DB)
 
@@ -64,7 +71,7 @@ func GetTask(c echo.Context) error {
 	return c.JSON(http.StatusOK, task)
 }
 
-func UpdateTask(c echo.Context) error {
+func (h *TaskHandler) UpdateTask(c echo.Context) error {
 	id := c.Param("id")
 	db := c.Get("db").(*gorm.DB)
 	task := new(models.Task)
@@ -99,7 +106,7 @@ func UpdateTask(c echo.Context) error {
 	return c.JSON(http.StatusOK, task)
 }
 
-func DeleteTask(c echo.Context) error {
+func (h *TaskHandler) DeleteTask(c echo.Context) error {
 	id := c.Param("id")
 	db := c.Get("db").(*gorm.DB)
 
