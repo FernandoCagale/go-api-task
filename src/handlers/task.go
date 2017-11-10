@@ -86,7 +86,7 @@ func (h *TaskHandler) UpdateTask(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, errors)
 	}
 
-	if err := db.Find(&task, id).Error; err != nil {
+	if err := db.Find(&models.Task{}, id).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
 			return c.JSON(http.StatusNotFound, map[string]string{
 				"message": "NotFound",

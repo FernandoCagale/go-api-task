@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/FernandoCagale/go-api-task/src/checker"
+	"github.com/FernandoCagale/go-api-task/src/config"
 	"github.com/FernandoCagale/go-api-task/src/datastore"
 	"github.com/FernandoCagale/go-api-task/src/handlers"
 	"github.com/FernandoCagale/go-api-task/src/lib"
@@ -12,7 +13,10 @@ import (
 )
 
 func main() {
-	db, err := datastore.ConnectDB()
+	env, err := config.LoadEnv()
+	failOnError(err, "Failed to load config!")
+
+	db, err := datastore.New(env.DatastoreURL)
 	failOnError(err, "Failed to init dababase connection!")
 	defer db.Close()
 
@@ -23,7 +27,7 @@ func main() {
 
 	checkers := map[string]checker.Checker{
 		"api":      checker.NewApi(),
-		"postgres": checker.NewPostgres(datastore.Connection()),
+		"postgres": checker.NewPostgres(env.DatastoreURL),
 	}
 
 	healthzHandler := handlers.NewHealthzHandler(checkers)
