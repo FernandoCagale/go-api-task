@@ -12,7 +12,7 @@ type Config struct {
 
 func init() {
 	viper.SetDefault("port", "3000")
-	viper.SetDefault("datastoreURL", "postgresql://postgres:postgres@localhost:5434/test?sslmode=disable")
+	viper.SetDefault("datastoreURL", "postgresql://test:test@api-postgres:5432/test?sslmode=disable")
 }
 
 func LoadEnv() (*Config, error) {
