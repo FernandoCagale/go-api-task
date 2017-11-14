@@ -16,8 +16,14 @@ func NewTaskHandler() *TaskHandler {
 }
 
 func (h *TaskHandler) SaveTask(c echo.Context) error {
-	db := c.Get("db").(*gorm.DB)
 	task := new(models.Task)
+
+	db, valid := getConnection(c)
+	if !valid {
+		return c.JSON(http.StatusBadRequest, map[string]string{
+			"message": "InternalServerError",
+		})
+	}
 
 	if err := c.Bind(task); err != nil {
 		return c.JSON(http.StatusBadRequest, map[string]string{
@@ -40,11 +46,17 @@ func (h *TaskHandler) SaveTask(c echo.Context) error {
 
 func (h *TaskHandler) GetAllTask(c echo.Context) error {
 	tasks := []models.Task{}
-	db := c.Get("db").(*gorm.DB)
+
+	db, valid := getConnection(c)
+	if !valid {
+		return c.JSON(http.StatusBadRequest, map[string]string{
+			"message": "InternalServerError",
+		})
+	}
 
 	if err := db.Find(&tasks).Error; err != nil {
 		return c.JSON(http.StatusBadRequest, map[string]string{
-			"message": "BadRequest",
+			"message": "InternalServerError",
 		})
 	}
 
@@ -53,9 +65,14 @@ func (h *TaskHandler) GetAllTask(c echo.Context) error {
 
 func (h *TaskHandler) GetTask(c echo.Context) error {
 	id := c.Param("id")
-	db := c.Get("db").(*gorm.DB)
-
 	var task models.Task
+
+	db, valid := getConnection(c)
+	if !valid {
+		return c.JSON(http.StatusBadRequest, map[string]string{
+			"message": "InternalServerError",
+		})
+	}
 
 	if err := db.Find(&task, id).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
@@ -73,8 +90,14 @@ func (h *TaskHandler) GetTask(c echo.Context) error {
 
 func (h *TaskHandler) UpdateTask(c echo.Context) error {
 	id := c.Param("id")
-	db := c.Get("db").(*gorm.DB)
 	task := new(models.Task)
+
+	db, valid := getConnection(c)
+	if !valid {
+		return c.JSON(http.StatusBadRequest, map[string]string{
+			"message": "InternalServerError",
+		})
+	}
 
 	if err := c.Bind(task); err != nil {
 		return c.JSON(http.StatusBadRequest, map[string]string{
@@ -108,9 +131,14 @@ func (h *TaskHandler) UpdateTask(c echo.Context) error {
 
 func (h *TaskHandler) DeleteTask(c echo.Context) error {
 	id := c.Param("id")
-	db := c.Get("db").(*gorm.DB)
-
 	var task models.Task
+
+	db, valid := getConnection(c)
+	if !valid {
+		return c.JSON(http.StatusBadRequest, map[string]string{
+			"message": "InternalServerError",
+		})
+	}
 
 	if err := db.Find(&task, id).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
@@ -132,4 +160,12 @@ func (h *TaskHandler) DeleteTask(c echo.Context) error {
 	return c.JSON(http.StatusOK, map[string]string{
 		"message": "Deleted",
 	})
+}
+
+func getConnection(c echo.Context) (*gorm.DB, bool) {
+	db := c.Get("db")
+	if db != nil {
+		return db.(*gorm.DB), true
+	}
+	return nil, false
 }

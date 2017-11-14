@@ -1,11 +1,14 @@
 package main
 
 import (
+	"time"
+
 	"github.com/FernandoCagale/go-api-task/src/checker"
 	"github.com/FernandoCagale/go-api-task/src/config"
 	"github.com/FernandoCagale/go-api-task/src/datastore"
 	"github.com/FernandoCagale/go-api-task/src/handlers"
 	"github.com/FernandoCagale/go-api-task/src/lib"
+	"github.com/jinzhu/gorm"
 
 	log "github.com/Sirupsen/logrus"
 	"github.com/labstack/echo"
@@ -13,17 +16,17 @@ import (
 )
 
 func main() {
+	var db *gorm.DB
 	env, err := config.LoadEnv()
 	failOnError(err, "Failed to load config!")
 
-	db, err := datastore.New(env.DatastoreURL)
-	failOnError(err, "Failed to init dababase connection!")
-	defer db.Close()
-
 	app := echo.New()
 
+	go bindDatastore(app, db, env.DatastoreURL)
+
 	app.Use(middleware.Logger())
-	app.Use(lib.BindDb(db))
+
+	defer db.Close()
 
 	checkers := map[string]checker.Checker{
 		"api":      checker.NewApi(),
@@ -44,11 +47,23 @@ func main() {
 	group.DELETE("/tasks/:id", tasksHandler.DeleteTask)
 
 	app.Logger.Fatal(app.Start(":3000"))
+
+}
+
+func bindDatastore(app *echo.Echo, db *gorm.DB, url string) {
+	for {
+		db, err := datastore.New(url)
+		failOnError(err, "Failed to init dababase connection!")
+		if err == nil {
+			app.Use(lib.BindDb(db))
+			break
+		}
+		time.Sleep(time.Second * 5)
+	}
 }
 
 func failOnError(err error, msg string) {
 	if err != nil {
-		log.Error(err)
 		log.Info(msg)
 	}
 }
