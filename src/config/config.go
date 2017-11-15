@@ -1,30 +1,23 @@
 package config
 
 import (
-	"github.com/kelseyhightower/envconfig"
-	"github.com/spf13/viper"
+	"os"
+
+	"github.com/joho/godotenv"
 )
 
 type Config struct {
-	Port         int    `envconfig:"PORT"`
-	DatastoreURL string `envconfig:"DATASTORE_URL"`
+	Port         string
+	DatastoreURL string
 }
 
 func init() {
-	viper.SetDefault("port", "3000")
-	viper.SetDefault("datastoreURL", "postgresql://test:test@api-postgres:5432/test?sslmode=disable")
+	godotenv.Load()
 }
 
-func LoadEnv() (*Config, error) {
-	var instance Config
-	if err := viper.Unmarshal(&instance); err != nil {
-		return nil, err
+func LoadEnv() *Config {
+	return &Config{
+		Port:         os.Getenv("PORT"),
+		DatastoreURL: os.Getenv("DATASTORE_URL"),
 	}
-
-	err := envconfig.Process("", &instance)
-	if err != nil {
-		return &instance, err
-	}
-
-	return &instance, nil
 }

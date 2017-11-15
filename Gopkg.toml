@@ -22,7 +22,4 @@
   name = "github.com/Sirupsen/logrus"
 
 [[constraint]]
-  name = "github.com/spf13/viper"
-
-[[constraint]]
-  name = "github.com/kelseyhightower/envconfig"
+  name = "github.com/joho/godotenv"

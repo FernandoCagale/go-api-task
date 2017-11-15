@@ -17,9 +17,7 @@ import (
 
 func main() {
 	var db *gorm.DB
-	env, err := config.LoadEnv()
-	failOnError(err, "Failed to load config!")
-
+	env := config.LoadEnv()
 	app := echo.New()
 
 	go bindDatastore(app, db, env.DatastoreURL)
@@ -46,8 +44,7 @@ func main() {
 	group.PUT("/tasks/:id", tasksHandler.UpdateTask)
 	group.DELETE("/tasks/:id", tasksHandler.DeleteTask)
 
-	app.Logger.Fatal(app.Start(":3000"))
-
+	app.Logger.Fatal(app.Start(":" + env.Port))
 }
 
 func bindDatastore(app *echo.Echo, db *gorm.DB, url string) {
