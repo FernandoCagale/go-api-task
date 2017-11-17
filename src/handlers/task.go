@@ -54,7 +54,15 @@ func (h *TaskHandler) GetAllTask(c echo.Context) error {
 		})
 	}
 
-	if err := db.Find(&tasks).Error; err != nil {
+	query := models.NewQuery(c)
+
+	where := make(map[string]interface{})
+
+	if !query.IsEmpty() {
+		where["description"] = query.Search
+	}
+
+	if err := db.Limit(query.GetLimit()).Offset(query.Offset).Where(where).Find(&tasks).Error; err != nil {
 		return c.JSON(http.StatusBadRequest, map[string]string{
 			"message": "InternalServerError",
 		})
